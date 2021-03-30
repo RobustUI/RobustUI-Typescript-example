@@ -1,0 +1,23 @@
+{
+  "name": "RobustUiStateMachineConcept",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "rxjs": "^6.6.6"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "ts-loader": "^8.0.18",
+    "typescript": "^4.2.3",
+    "webpack": "^5.26.3",
+    "webpack-cli": "^4.5.0"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
