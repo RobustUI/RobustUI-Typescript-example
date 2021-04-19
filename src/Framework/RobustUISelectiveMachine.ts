@@ -2,11 +2,12 @@ import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {filter, map} from "rxjs/operators";
 import {RobustUI} from "./RobustUI";
 import {StreamDeclaration} from "./declaration-types/StreamDeclaration";
+import {Configuration} from "./configuration";
 
 export abstract class RobustUISelectiveMachine implements RobustUI {
     private $inputStream = new Subject<number>();
     private $machineSwitch = new BehaviorSubject<string>(null);
-    private configurations = new BehaviorSubject<{machine: string, state: string | Map<string, string>}>(null)
+    private configurations = new BehaviorSubject<Configuration[]>(null)
     private $outputStream = new Subject<{name: string, value: any}>()
     protected activeMachine: string;
     protected machines: Map<string, RobustUI>;
@@ -16,7 +17,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
     private machineElements: Map<string, HTMLElement> = new Map<string, HTMLElement>();
 
 
-    public currentValue: string;
+    public currentValue: Configuration[];
     public abstract events: StreamDeclaration[];
     public abstract inputs: StreamDeclaration[];
     public abstract outputs: StreamDeclaration[];
@@ -25,7 +26,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
         this.machines.forEach((el, key) => {
             el.onNewConfiguration().subscribe(e => {
                 if (this.activeMachine === key) {
-                    this.configurations.next({machine: key, state: el.currentValue})
+                    this.configurations.next(el.currentValue)
                 }
             });
             el.outputs.forEach((output) => {
@@ -40,18 +41,24 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
         this.deactivateMachine(this.activeMachine)
         this.activeMachine = machine;
         this.$machineSwitch.next(machine);
+        this.configurations.next(this.machines.get(machine).currentValue)
         this.activateMachine(machine)
     }
 
-    public onNewConfiguration(machine: string): Observable<string | Map<string, string>> {
-      return this.configurations.asObservable().pipe(
-          filter((e) => e != null && e.machine == machine),
-          map(e => e.state)
-      );
+    public onNewConfiguration(machine?: string): Observable<Configuration[]> {
+        if (machine == null) {
+            return this.configurations.asObservable().pipe(filter(e => e != null && e.length > 0 ));
+        } else {
+            return this.configurations.asObservable().pipe(
+                filter((e) => e != null && e.length > 0 && e[0].machine == machine)
+            );
+        }
     }
 
-    public sendInput(input: number): void {
-        this.$inputStream.next(input)
+    public sendInput(event: string, data: number): void {
+        if (this.inputs.find(input => input.stream === event) != null) {
+            this.$inputStream.next(data)
+        }
     }
 
     public getOutputStream(name: string): Observable<any> {
@@ -71,12 +78,26 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
     }
 
     private activateMachine(machineName: string) {
-        this.machines.get(machineName).registerElement(this.machineElements.get(machineName));
+        this.machineElements.forEach((el, key) => {
+           const split = key.split('::');
+
+           if (split[0] === machineName && split.length > 1) {
+               this.machines.get(machineName).registerElement(el, split[1]);
+           } else if (split[0] === machineName && split.length === 1) {
+               this.machines.get(machineName).registerElement(el);
+           }
+        });
     }
 
     private deactivateMachine(machineName: string) {
-        if (machineName != null) {
-            this.machines.get(machineName).unregisterElement(this.machineElements.get(machineName));
-        }
+        this.machineElements.forEach((el, key) => {
+            const split = key.split('::');
+
+            if (split[0] === machineName && split.length > 1) {
+                this.machines.get(machineName).unregisterElement(el, split[1]);
+            } else if (split[0] === machineName && split.length === 1) {
+                this.machines.get(machineName).unregisterElement(el);
+            }
+        });
     }
 }

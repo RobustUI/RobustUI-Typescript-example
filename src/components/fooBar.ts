@@ -1,41 +1,37 @@
-import {RobustUICompositeMachine} from "../Framework/RobustUICompositeMachine";
-import {ActionEvent, RobustUIActions, RobustUIMachine} from "../Framework/RobustUIMachine";
-import * as Process from "process";
-import {Observable} from "rxjs";
 import {RobustUI} from "../Framework/RobustUI";
 import {RobustUISelectiveMachine} from "../Framework/RobustUISelectiveMachine";
 import {StreamDeclaration} from "../Framework/declaration-types/StreamDeclaration";
-import {MachineDeclaration} from "../Framework/declaration-types/MachineDeclaration";
-import {StateDeclaration} from "../Framework/declaration-types/StateDeclaration";
 import {Configuration} from "../Framework/configuration";
+import {ActionEvent, RobustUIActions, RobustUIMachine} from "../Framework/RobustUIMachine";
+import {MachineDeclaration} from "../Framework/declaration-types/MachineDeclaration";
+import {RobustUICompositeMachine} from "../Framework/RobustUICompositeMachine";
+import {Observable} from "rxjs";
+import {StateDeclaration} from "../Framework/declaration-types/StateDeclaration";
 
 export type LightLockControllerWithControlsMachine = "lightLockController" | "lightLockController::Light" | "lightLockController::Lock" | "lightLockController::adapter" | "ControlController" | "ControlController::Light" | "ControlController::Lock";
 export class LightLockControllerWithControls extends RobustUICompositeMachine{
     protected machines = new Map<LightLockControllerWithControlsMachine, RobustUI>();
     constructor() {
         super();
-        this.machines.set("lightLockController", new LightLockController2());
+        this.machines.set("lightLockController", new LightLockController());
         this.machines.set("ControlController", new LightLockSelective());
         this.initialize();
     }
     public outputs: StreamDeclaration[] = [];
     public inputs: StreamDeclaration[] = [];
     public events: StreamDeclaration[] = [];
-
-    public registerElement(element: HTMLElement, machine: LightLockControllerWithControlsMachine) {
+    public registerElement(element: HTMLElement, machine: LightLockControllerWithControlsMachine): void {
         super.registerElement(element, machine);
     }
-
+    public unregisterElement(element: HTMLElement, machine: LightLockControllerWithControlsMachine): void {
+        super.unregisterElement(element, machine);
+    }
     public onNewConfiguration(): Observable<Configuration[]> {
         return super.onNewConfiguration();
     }
-
-    public unregisterElement(element: HTMLElement, machine: LightLockControllerWithControlsMachine) {
-        super.unregisterElement(element, machine);
-    }
 }
 export type LightLockControllerMachine = "Light" | "Lock" | "adapter";
-export class LightLockController2 extends RobustUICompositeMachine{
+export class LightLockController extends RobustUICompositeMachine{
     protected machines = new Map<LightLockControllerMachine, RobustUI>();
     constructor() {
         super();
@@ -71,13 +67,14 @@ export class LightLockController2 extends RobustUICompositeMachine{
     public outputs: StreamDeclaration[] = [];
     public inputs: StreamDeclaration[] = [];
     public events: StreamDeclaration[] = [];
-
-    public registerElement(element: HTMLElement, machine: LightLockControllerMachine) {
+    public registerElement(element: HTMLElement, machine: LightLockControllerMachine): void {
         super.registerElement(element, machine);
     }
-
-    public unregisterElement(element: HTMLElement, machine: LightLockControllerMachine) {
+    public unregisterElement(element: HTMLElement, machine: LightLockControllerMachine): void {
         super.unregisterElement(element, machine);
+    }
+    public onNewConfiguration(): Observable<Configuration[]> {
+        return super.onNewConfiguration();
     }
 }
 export type onOffComponentState = "off" | "on";
@@ -245,9 +242,9 @@ export class onOffAdapter extends RobustUIMachine{
         return super.when(state, action);
     }
 }
-export type ControlControllerMachines = "Light" | "Lock";
+export type LightLockSelectiveMachines = "Light" | "Lock";
 export class LightLockSelective extends RobustUISelectiveMachine{
-    protected machines = new Map<ControlControllerMachines, RobustUI>();
+    protected machines = new Map<LightLockSelectiveMachines, RobustUI>();
     constructor() {
         super();
         this.machines.set("Light", new onOffComponent("Light"));
@@ -268,10 +265,10 @@ export class LightLockSelective extends RobustUISelectiveMachine{
         },
     ];
     public events: StreamDeclaration[] = [];
-    public get onMachineSwitch(): Observable<ControlControllerMachines> {
-        return this.machineSwitchStream as Observable<ControlControllerMachines>
+    public get onMachineSwitch(): Observable<LightLockSelectiveMachines> {
+        return this.machineSwitchStream as Observable<LightLockSelectiveMachines>
     }
-    public onNewConfiguration(machine: ControlControllerMachines): Observable<Configuration[]> {
+    public onNewConfiguration(machine: LightLockSelectiveMachines): Observable<Configuration[]> {
         return super.onNewConfiguration(machine)
     }
     public getOutputStream(name: string): Observable<any> {

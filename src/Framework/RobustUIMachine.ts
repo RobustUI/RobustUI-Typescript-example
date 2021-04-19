@@ -5,6 +5,7 @@ import {filter, map, tap} from "rxjs/operators";
 import {TransitionDeclaration} from "./declaration-types/TransitionDeclaration";
 import {StreamDeclaration} from "./declaration-types/StreamDeclaration";
 import {RobustUI} from "./RobustUI";
+import {Configuration} from "./configuration";
 
 export type RobustUIActions = 'onExit' | 'onEnter' | 'onTransition';
 
@@ -16,14 +17,22 @@ export abstract class RobustUIMachine implements RobustUI{
     public abstract outputs: StreamDeclaration[];
     public abstract inputs: StreamDeclaration[];
     public abstract events: StreamDeclaration[];
-    public get currentValue(): string {
-        return this.currentState.name;
+
+    protected constructor(private name: string) {}
+
+    public get currentValue(): Configuration[] {
+        return [
+            {
+                machine: this.name,
+                state: this.currentState.name
+            }
+        ];
     }
 
     private eventSubscriptions: Subscription[] = [];
-    private configuration = new BehaviorSubject<string>(null);
+    private configuration = new BehaviorSubject<Configuration[]>(null);
 
-    public onNewConfiguration(): Observable<string>{
+    public onNewConfiguration(): Observable<Configuration[]>{
         return this.configuration.asObservable().pipe(filter(e => e != null));
     }
 
@@ -40,7 +49,7 @@ export abstract class RobustUIMachine implements RobustUI{
         return this.currentState;
     }
 
-    public sendInput(label: string): void {
+    public sendInput(label: string, data: any = null): void {
         this.transition(label);
     }
 
@@ -65,7 +74,7 @@ export abstract class RobustUIMachine implements RobustUI{
 
         if (transition.label.indexOf('/') >= 0) {
             const startPos = transition.label.indexOf('/') + 1;
-            const outputStream = transition.label.substr(startPos)
+            const outputStream = transition.label.substr(startPos).replace('!','')
             this.outputStream.get(outputStream).next(transition);
         } else if (this.outputs.find(o => o.stream === transition.label) != null) {
             this.outputStream.get(transition.label).next(transition);
@@ -107,7 +116,12 @@ export abstract class RobustUIMachine implements RobustUI{
         })
 
         this.currentState = destination;
-        this.configuration.next(this.currentState.name)
+        this.configuration.next([
+            {
+                machine: this.name,
+                state: this.currentState.name
+            }
+        ]);
 
         let instantTransition = destination.transitions.find(e => this.outputs.find(o => o.stream === e.label) != null);
         if (instantTransition != null) {

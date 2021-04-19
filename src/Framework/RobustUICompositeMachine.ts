@@ -1,22 +1,35 @@
 import {RobustUIMachine} from "./RobustUIMachine";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {filter, map} from "rxjs/operators";
+import {BehaviorSubject, Observable, of, Subject} from "rxjs";
+import {filter, map, take} from "rxjs/operators";
 import {RobustUI} from "./RobustUI";
 import {StreamDeclaration} from "./declaration-types/StreamDeclaration";
+import {Configuration} from "./configuration";
 
 export abstract class RobustUICompositeMachine implements RobustUI{
     protected machines: Map<string, RobustUI>;
     private $outputStream = new Subject<{name: string, value: any}>()
-    private configurations = new BehaviorSubject<Map<string, string>>(null)
-
-    public onNewConfiguration(): Observable<Map<string, string>>{
-        return this.configurations.asObservable().pipe(filter(e => e != null));
+    private $configurations = new BehaviorSubject<Configuration[]>(null)
+    private configurations = new Map<string, any>();
+    public onNewConfiguration(): Observable<Configuration[]>{
+        return this.$configurations.asObservable().pipe(filter(e => e != null));
     }
 
     protected initialize() {
        this.machines.forEach((el, key) => {
-            el.onNewConfiguration().subscribe(e => {
-                this.currentValue;
+            el.onNewConfiguration().subscribe(config => {
+                config.forEach(machine => {
+                    if (key == machine.machine) {
+                        this.configurations.set(machine.machine, machine.state);
+                    } else {
+                        this.configurations.set(key, config);
+                    }
+                });
+
+                const newConfig: Configuration[] = [];
+                this.configurations.forEach((state, name) => {
+                    newConfig.push({machine: name, state: state})
+                });
+                this.$configurations.next(newConfig);
             });
             el.outputs.forEach((output) => {
                 el.getOutputStream(output.stream.toLowerCase()).subscribe((event) => {
@@ -25,19 +38,38 @@ export abstract class RobustUICompositeMachine implements RobustUI{
             })
         });
     }
-    public get currentValue(): Map<string, string> {
-        const ret = new Map<string, string>();
+    public get currentValue(): Configuration[]{
+        const newConfig: Configuration[] = [];
 
-        this.machines.forEach((value, key)=> {
-            ret.set(key, value.currentValue as string)
+        this.configurations.forEach((state, name) => {
+            newConfig.push({machine: name, state: state})
         });
 
-        this.configurations.next(ret);
-        return ret;
+        return newConfig;
     }
 
-    public abstract registerElement(element: HTMLElement, machine: string): void;
-    public abstract unregisterElement(element: HTMLElement, machine: string): void;
+    public registerElement(element: HTMLElement, machine: string): void {
+        this.machines.forEach((state, name) => {
+            const split = machine.split('::');
+
+            if (split[0] === name && split.length > 1) {
+                this.machines.get(name).registerElement(element, split[1]);
+            } else if (split[0] === name && split.length === 1) {
+                this.machines.get(name).registerElement(element);
+            }
+        });
+    }
+    public unregisterElement(element: HTMLElement, machine: string): void {
+        this.machines.forEach((state, name) => {
+            const split = machine.split('::');
+
+            if (split[0] === name && split.length > 1) {
+                this.machines.get(name).unregisterElement(element, split[1]);
+            } else if (split[0] === name && split.length === 1) {
+                this.machines.get(name).unregisterElement(element);
+            }
+        });
+    }
 
     public events: StreamDeclaration[];
     public inputs: StreamDeclaration[];
@@ -50,6 +82,10 @@ export abstract class RobustUICompositeMachine implements RobustUI{
         )
     }
 
-    public sendInput(event: string): void {
+    public sendInput(event: string, data:any = null): void {
+        console.log(event);
+        this.machines.forEach(m => {
+           m.sendInput(event, data);
+        });
     }
 }
