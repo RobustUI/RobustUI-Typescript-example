@@ -1,21 +1,21 @@
-import {RobustUIMachine} from "./RobustUIMachine";
-import {BehaviorSubject, Observable, of, Subject} from "rxjs";
-import {filter, map, take} from "rxjs/operators";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {filter, map} from "rxjs/operators";
 import {RobustUI} from "./RobustUI";
 import {StreamDeclaration} from "./declaration-types/StreamDeclaration";
 import {Configuration} from "./configuration";
 
-export abstract class RobustUICompositeMachine implements RobustUI{
+export abstract class RobustUICompositeMachine implements RobustUI {
     protected machines: Map<string, RobustUI>;
-    private $outputStream = new Subject<{name: string, value: any}>()
+    private $outputStream = new Subject<{ name: string, value: any }>()
     private $configurations = new BehaviorSubject<Configuration[]>(null)
     private configurations = new Map<string, any>();
-    public onNewConfiguration(): Observable<Configuration[]>{
+
+    public onNewConfiguration(): Observable<Configuration[]> {
         return this.$configurations.asObservable().pipe(filter(e => e != null));
     }
 
     protected initialize() {
-       this.machines.forEach((el, key) => {
+        this.machines.forEach((el, key) => {
             el.onNewConfiguration().subscribe(config => {
                 config.forEach(machine => {
                     if (key == machine.machine) {
@@ -38,7 +38,8 @@ export abstract class RobustUICompositeMachine implements RobustUI{
             })
         });
     }
-    public get currentValue(): Configuration[]{
+
+    public get currentValue(): Configuration[] {
         const newConfig: Configuration[] = [];
 
         this.configurations.forEach((state, name) => {
@@ -48,7 +49,11 @@ export abstract class RobustUICompositeMachine implements RobustUI{
         return newConfig;
     }
 
+    //TODO find out why one machine is undefined
     public registerElement(element: HTMLElement, machine: string): void {
+        if (machine == null) {
+            return;
+        }
         this.machines.forEach((state, name) => {
             const split = machine.split('::');
 
@@ -59,7 +64,11 @@ export abstract class RobustUICompositeMachine implements RobustUI{
             }
         });
     }
+
     public unregisterElement(element: HTMLElement, machine: string): void {
+        if (machine == null) {
+            return;
+        }
         this.machines.forEach((state, name) => {
             const split = machine.split('::');
 
@@ -82,10 +91,9 @@ export abstract class RobustUICompositeMachine implements RobustUI{
         )
     }
 
-    public sendInput(event: string, data:any = null): void {
-        console.log(event);
+    public sendInput(event: string, data: any = null): void {
         this.machines.forEach(m => {
-           m.sendInput(event, data);
+            m.sendInput(event, data);
         });
     }
 }

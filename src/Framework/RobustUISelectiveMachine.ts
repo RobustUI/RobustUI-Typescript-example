@@ -16,7 +16,6 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
     protected machineSwitchStream = this.$machineSwitch.asObservable().pipe(filter((e) => e != null));
     private machineElements: Map<string, HTMLElement> = new Map<string, HTMLElement>();
 
-
     public currentValue: Configuration[];
     public abstract events: StreamDeclaration[];
     public abstract inputs: StreamDeclaration[];
