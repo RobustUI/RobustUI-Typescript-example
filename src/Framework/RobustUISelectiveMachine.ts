@@ -8,7 +8,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
     private $inputStream = new Subject<number>();
     private $machineSwitch = new BehaviorSubject<string>(null);
     private configurations = new BehaviorSubject<Configuration[]>(null)
-    private $outputStream = new Subject<{name: string, value: any}>()
+    private $outputStream = new Subject<{ name: string, value: any }>()
     protected activeMachine: string;
     protected machines: Map<string, RobustUI>;
     protected inputStream = this.$inputStream.asObservable()
@@ -30,7 +30,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
             });
             el.outputs.forEach((output) => {
                 el.getOutputStream(output.stream.toLowerCase()).subscribe((event) => {
-                   this.$outputStream.next({name: output.stream.toLowerCase(), value: event})
+                    this.$outputStream.next({name: output.stream.toLowerCase(), value: event})
                 });
             })
         });
@@ -46,7 +46,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
 
     public onNewConfiguration(machine?: string): Observable<Configuration[]> {
         if (machine == null) {
-            return this.configurations.asObservable().pipe(filter(e => e != null && e.length > 0 ));
+            return this.configurations.asObservable().pipe(filter(e => e != null && e.length > 0));
         } else {
             return this.configurations.asObservable().pipe(
                 filter((e) => e != null && e.length > 0 && e[0].machine == machine)

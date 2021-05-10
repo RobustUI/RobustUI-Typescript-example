@@ -9,7 +9,7 @@ import {Configuration} from "./configuration";
 
 export type RobustUIActions = 'onExit' | 'onEnter' | 'onTransition';
 
-export abstract class RobustUIMachine implements RobustUI{
+export abstract class RobustUIMachine implements RobustUI {
     protected abstract machineDeclaration: MachineDeclaration;
     protected actionSubject = new Subject<ActionEvent>();
     private currentState: StateDeclaration;
@@ -18,7 +18,8 @@ export abstract class RobustUIMachine implements RobustUI{
     public abstract inputs: StreamDeclaration[];
     public abstract events: StreamDeclaration[];
 
-    protected constructor(private name: string) {}
+    protected constructor(private name: string) {
+    }
 
     public get currentValue(): Configuration[] {
         return [
@@ -32,7 +33,7 @@ export abstract class RobustUIMachine implements RobustUI{
     private eventSubscriptions: Subscription[] = [];
     private configuration = new BehaviorSubject<Configuration[]>(null);
 
-    public onNewConfiguration(): Observable<Configuration[]>{
+    public onNewConfiguration(): Observable<Configuration[]> {
         return this.configuration.asObservable().pipe(filter(e => e != null));
     }
 
@@ -74,12 +75,11 @@ export abstract class RobustUIMachine implements RobustUI{
 
         if (transition.label.indexOf('/') >= 0) {
             const startPos = transition.label.indexOf('/') + 1;
-            const outputStream = transition.label.substr(startPos).replace('!','')
+            const outputStream = transition.label.substr(startPos).replace('!', '')
             this.outputStream.get(outputStream).next(transition);
         } else if (this.outputs.find(o => o.stream === transition.label) != null) {
             this.outputStream.get(transition.label).next(transition);
-        }
-        else {
+        } else {
             this.finishTransition(transition);
         }
     }

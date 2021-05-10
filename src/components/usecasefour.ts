@@ -88,12 +88,6 @@ export class Toggle extends RobustUIMachine{
         this.initialize();
     }
 
-    public registerElement(element: HTMLElement): void {
-        element.addEventListener("click", function() {
-            this.transition("click");
-        }.bind(this));
-    }
-
     public getOutputStream(label: ToggleOutputStreams): Observable<any> {
         return super.getOutputStream(label);
     }
@@ -189,12 +183,6 @@ export class dropdown extends RobustUIMachine{
         this.initialize();
     }
 
-    public registerElement(element: HTMLElement): void {
-        element.addEventListener("click", function() {
-            this.transition("click");
-        }.bind(this));
-    }
-
     public getOutputStream(label: dropdownOutputStreams): Observable<any> {
         return super.getOutputStream(label);
     }
@@ -261,15 +249,6 @@ export class dropdownElement extends RobustUIMachine{
         };
 
         this.initialize();
-    }
-
-    public registerElement(element: HTMLElement): void {
-        element.addEventListener("pointerenter", function() {
-            this.transition("pointerenter");
-        }.bind(this));
-        element.addEventListener("pointerleave", function() {
-            this.transition("pointerleave");
-        }.bind(this));
     }
 
     public getOutputStream(label: dropdownElementOutputStreams): Observable<any> {
