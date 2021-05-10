@@ -3,68 +3,34 @@ import {usecasefour} from "./components/usecasefour";
 const inputField = document.getElementById("input") as HTMLInputElement;
 
 const dropdown = document.getElementById("dropdown");
-const dropdownEl1 = document.getElementById("dropdownEl1");
-const dropdownEl2 = document.getElementById("dropdownEl2");
-const dropdownEl3 = document.getElementById("dropdownEl3");
+const historyEl = document.getElementById("dropdownEl1");
+const contactEl = document.getElementById("dropdownEl2");
+const jobsEl = document.getElementById("dropdownEl3");
 
 const lock = document.getElementById("lock");
-const toggleSelective = new usecasefour();
 
-toggleSelective.sendInput('stream', 0);
+const toggleSelective = new usecasefour();
 inputField.onchange = (event) => {
     toggleSelective.sendInput('stream', +inputField.value);
 }
-
-toggleSelective.onNewConfiguration("dropdown::toggle").subscribe(configurations => {
-    console.log(configurations);
+toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
     configurations.forEach(config => {
-        if (config.state === "show") {
-            document.getElementById("myDropdown").classList.add("show")
-        } else if (config.state === "notShow") {
-            document.getElementById("myDropdown").classList.remove("show")
-        }
-        /*if (config.machine === "history") {
-            handleDropDownMenuElement(dropdownEl1, config.state as string);
+        if (config.machine === "toggle") {
+            if (config.state === "show") {
+                document.getElementById("myDropdown").classList.add("show")
+            } else if (config.state === "notShow") {
+                document.getElementById("myDropdown").classList.remove("show")
+            }
+        } else if (config.machine === "history") {
+            handleDropDownMenuElement(historyEl, config.state as string);
         } else if (config.machine === "contact") {
-            handleDropDownMenuElement(dropdownEl2, config.state as string);
+            handleDropDownMenuElement(contactEl, config.state as string);
         } else if (config.machine === "jobs") {
-            handleDropDownMenuElement(dropdownEl3, config.state as string);
-        } */
-    })
-})
-toggleSelective.onNewConfiguration("dropdown::contact").subscribe(configurations => {
-    console.log(configurations);
-
-    configurations.forEach(config => {
-        if (config.state === "show") {
-            document.getElementById("myDropdown").classList.add("show")
-        } else if (config.state === "notShow") {
-            document.getElementById("myDropdown").classList.remove("show")
+            handleDropDownMenuElement(jobsEl, config.state as string);
         }
     })
 })
-toggleSelective.onNewConfiguration("dropdown::history").subscribe(configurations => {
-    console.log(configurations);
 
-    configurations.forEach(config => {
-        if (config.state === "show") {
-            document.getElementById("myDropdown").classList.add("show")
-        } else if (config.state === "notShow") {
-            document.getElementById("myDropdown").classList.remove("show")
-        }
-    })
-})
-toggleSelective.onNewConfiguration("dropdown::jobs").subscribe(configurations => {
-    console.log(configurations);
-
-    configurations.forEach(config => {
-        if (config.state === "show") {
-            document.getElementById("myDropdown").classList.add("show")
-        } else if (config.state === "notShow") {
-            document.getElementById("myDropdown").classList.remove("show")
-        }
-    })
-})
 toggleSelective.onNewConfiguration("FAQ").subscribe(configurations => {
     console.log(configurations);
     configurations.forEach(config => {
@@ -87,17 +53,17 @@ function handleDropDownMenuElement(element: HTMLElement, state: string) {
 toggleSelective.onMachineSwitch.subscribe(machine => {
     if (machine === "dropdown") {
         toggleSelective.registerElement(dropdown, "dropdown::toggle");
-        toggleSelective.registerElement(dropdownEl1, "dropdown::history");
-        toggleSelective.registerElement(dropdownEl2, "dropdown::contact");
-        toggleSelective.registerElement(dropdownEl3, "dropdown::jobs");
+        toggleSelective.registerElement(historyEl, "dropdown::history");
+        toggleSelective.registerElement(contactEl, "dropdown::contact");
+        toggleSelective.registerElement(jobsEl, "dropdown::jobs");
         toggleSelective.unregisterElement(lock, "FAQ");
         dropdown.style.display = "block"
         lock.style.display = "none"
     } else if (machine === "FAQ") {
         toggleSelective.unregisterElement(dropdown, "dropdown::toggle");
-        toggleSelective.unregisterElement(dropdownEl1, "dropdown::history");
-        toggleSelective.unregisterElement(dropdownEl2, "dropdown::contact");
-        toggleSelective.unregisterElement(dropdownEl3, "dropdown::jobs");
+        toggleSelective.unregisterElement(historyEl, "dropdown::history");
+        toggleSelective.unregisterElement(contactEl, "dropdown::contact");
+        toggleSelective.unregisterElement(jobsEl, "dropdown::jobs");
         toggleSelective.registerElement(lock, "FAQ");
         dropdown.style.display = "none"
         lock.style.display = "block"

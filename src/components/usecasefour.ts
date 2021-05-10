@@ -35,7 +35,7 @@ export class usecasefour extends RobustUISelectiveMachine{
     public get onMachineSwitch(): Observable<usecasefourMachines> {
         return this.machineSwitchStream as Observable<usecasefourMachines>
     }
-    public onNewConfiguration(machine: usecasefourMachines): Observable<Configuration[]> {
+    public onNewConfiguration(machine: string): Observable<Configuration[]> {
         return super.onNewConfiguration(machine)
     }
     public getOutputStream(name: string): Observable<any> {
