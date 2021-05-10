@@ -15,17 +15,6 @@ inputField.onchange = (event) => {
     toggleSelective.sendInput('stream', +inputField.value);
 }
 
-toggleSelective.onNewConfiguration("dropdown").subscribe(configurations => {
-    console.log(configurations);
-    configurations.forEach(config => {
-        if (config.state === "show") {
-            document.getElementById("myDropdown").classList.add("show")
-        } else if (config.state === "notShow") {
-            document.getElementById("myDropdown").classList.remove("show")
-        }
-    })
-})
-
 toggleSelective.onNewConfiguration("dropdown::toggle").subscribe(configurations => {
     console.log(configurations);
     configurations.forEach(config => {
@@ -76,7 +65,6 @@ toggleSelective.onNewConfiguration("dropdown::jobs").subscribe(configurations =>
         }
     })
 })
-
 toggleSelective.onNewConfiguration("FAQ").subscribe(configurations => {
     console.log(configurations);
     configurations.forEach(config => {
