@@ -1,12 +1,12 @@
-import {RobustUISelectiveMachine} from "../Framework/RobustUISelectiveMachine";
-import {RobustUI} from "../Framework/RobustUI";
-import {StreamDeclaration} from "../Framework/declaration-types/StreamDeclaration";
 import {Configuration} from "../Framework/configuration";
 import {ActionEvent, RobustUIActions, RobustUIMachine} from "../Framework/RobustUIMachine";
-import {MachineDeclaration} from "../Framework/declaration-types/MachineDeclaration";
+import {StreamDeclaration} from "../Framework/declaration-types/StreamDeclaration";
 import {RobustUICompositeMachine} from "../Framework/RobustUICompositeMachine";
+import {RobustUISelectiveMachine} from "../Framework/RobustUISelectiveMachine";
 import {Observable} from "rxjs";
+import {MachineDeclaration} from "../Framework/declaration-types/MachineDeclaration";
 import {StateDeclaration} from "../Framework/declaration-types/StateDeclaration";
+import {RobustUI} from "../Framework/RobustUI";
 
 export type usecasefourMachines = "FAQ" | "dropdown" | "dropdown::toggle" | "dropdown::history" | "dropdown::contact" | "dropdown::jobs";
 export class usecasefour extends RobustUISelectiveMachine{
@@ -87,6 +87,7 @@ export class Toggle extends RobustUIMachine{
 
         this.initialize();
     }
+
 
     public getOutputStream(label: ToggleOutputStreams): Observable<any> {
         return super.getOutputStream(label);
@@ -183,6 +184,7 @@ export class dropdown extends RobustUIMachine{
         this.initialize();
     }
 
+
     public getOutputStream(label: dropdownOutputStreams): Observable<any> {
         return super.getOutputStream(label);
     }
@@ -250,6 +252,7 @@ export class dropdownElement extends RobustUIMachine{
 
         this.initialize();
     }
+
 
     public getOutputStream(label: dropdownElementOutputStreams): Observable<any> {
         return super.getOutputStream(label);
