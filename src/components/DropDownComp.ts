@@ -126,7 +126,7 @@ export class dropdownElement extends RobustUIMachine{
             transitions: [
                 {
                     target: 'notSelected',
-                    label: '/close!',
+                    label: 'pointerenter/close!',
                 },
                 {
                     target: 'notSelected',
@@ -147,7 +147,7 @@ export class dropdownElement extends RobustUIMachine{
             stream: "pointerenter",
         },
         {
-            stream: "/close!",
+            stream: "pointerenter/close!",
         },
         {
             stream: "pointerleave",
@@ -169,9 +169,6 @@ export class dropdownElement extends RobustUIMachine{
     }
 
     public registerElement(element: HTMLElement): void {
-        element.addEventListener("", function() {
-            this.transition("");
-        }.bind(this));
         element.addEventListener("pointerenter", function() {
             this.transition("pointerenter");
         }.bind(this));
