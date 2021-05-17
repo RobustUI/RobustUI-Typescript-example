@@ -4,14 +4,14 @@ const dropdown = document.getElementById("dropdown");
 const dropdownEl1 = document.getElementById("dropdownEl1");
 const dropdownEl2 = document.getElementById("dropdownEl2");
 const dropdownEl3 = document.getElementById("dropdownEl3");
-const modelCheckersDropDown = new DropDownComp();
+const dropDownComp = new DropDownComp();
 
-modelCheckersDropDown.registerElement(dropdown, "toggle");
-modelCheckersDropDown.registerElement(dropdownEl1, "history");
-modelCheckersDropDown.registerElement(dropdownEl2, "contact");
-modelCheckersDropDown.registerElement(dropdownEl3, "jobs");
+dropDownComp.registerElement(dropdown, "toggle");
+dropDownComp.registerElement(dropdownEl1, "history");
+dropDownComp.registerElement(dropdownEl2, "contact");
+dropDownComp.registerElement(dropdownEl3, "jobs");
 
-modelCheckersDropDown.onNewConfiguration().subscribe(configurations => {
+dropDownComp.onNewConfiguration().subscribe(configurations => {
     configurations.forEach(config => {
         if (config.machine === "history") {
             handleDropDownMenuElement(dropdownEl1, config.state as string);
@@ -32,7 +32,7 @@ modelCheckersDropDown.onNewConfiguration().subscribe(configurations => {
 document.addEventListener("click", (event) => {
     let isInside = dropdown.contains(event.target as Node);
     if (!isInside) {
-        modelCheckersDropDown.sendInput("close");
+        dropDownComp.sendInput("close");
     }
 })
 
