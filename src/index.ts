@@ -18,8 +18,6 @@ toggleSelective.sendInput('stream', 0);
 
 
 toggleSelective.onMachineSwitch.subscribe(machine => {
-    console.log(machine);
-
     if (machine === "dropdown") {
         toggleSelective.registerElement(dropdown, "dropdown::toggle");
         toggleSelective.registerElement(historyEl, "dropdown::history");
@@ -40,7 +38,6 @@ toggleSelective.onMachineSwitch.subscribe(machine => {
 })
 
 toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
-    console.log(configurations);
     configurations.forEach(config => {
         if (config.machine === "toggle") {
             if (config.state === "show") {
@@ -59,10 +56,9 @@ toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
 })
 
 document.addEventListener("click", (event) => {
-    console.log("HELLO");
-    
     let isInside = dropdown.contains(event.target as Node);
     if (!isInside) {
+        console.log("CLOSING");
         toggleSelective.sendInput("close", 0);
     }
 })
