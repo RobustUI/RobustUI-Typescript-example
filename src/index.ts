@@ -10,12 +10,10 @@ const jobsEl = document.getElementById("dropdownEl3");
 const lock = document.getElementById("lock");
 
 const toggleSelective = new usecasefour();
+
 inputField.onchange = (event) => {
     toggleSelective.sendInput('stream', +inputField.value);
 }
-
-toggleSelective.sendInput('stream', 0);
-
 
 toggleSelective.onMachineSwitch.subscribe(machine => {
     if (machine === "dropdown") {
@@ -37,6 +35,7 @@ toggleSelective.onMachineSwitch.subscribe(machine => {
     }
 })
 
+
 toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
     configurations.forEach(config => {
         if (config.machine === "toggle") {
@@ -55,13 +54,7 @@ toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
     })
 })
 
-document.addEventListener("click", (event) => {
-    let isInside = dropdown.contains(event.target as Node);
-    if (!isInside) {
-        console.log("CLOSING");
-        toggleSelective.sendInput("close", 0);
-    }
-})
+toggleSelective.sendInput('stream', 0);
 
 toggleSelective.onNewConfiguration("FAQ").subscribe(configurations => {
     configurations.forEach(config => {
@@ -80,3 +73,10 @@ function handleDropDownMenuElement(element: HTMLElement, state: string) {
         element.classList.add("hovered")
     }
 }
+
+document.addEventListener("click", (event) => {
+    let isInside = dropdown.contains(event.target as Node);
+    if (!isInside) {
+        toggleSelective.sendInput("close", 0);
+    }
+})
