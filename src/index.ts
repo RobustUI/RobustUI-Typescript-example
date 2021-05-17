@@ -6,6 +6,7 @@ const newCol = document.getElementById("newCol");
 const toggleSelective = new usecase();
 
 toggleSelective.sendInput('stream', 0);
+
 inputField.onchange = (event) => {
     toggleSelective.sendInput('stream', +inputField.value);
 }
