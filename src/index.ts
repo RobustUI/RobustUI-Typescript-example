@@ -13,6 +13,7 @@ const toggleSelective = new usecasefour();
 inputField.onchange = (event) => {
     toggleSelective.sendInput('stream', +inputField.value);
 }
+
 toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
     configurations.forEach(config => {
         if (config.machine === "toggle") {
@@ -31,8 +32,14 @@ toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
     })
 })
 
+document.addEventListener("click", (event) => {
+    let isInside = dropdown.contains(event.target as Node);
+    if (!isInside) {
+        toggleSelective.sendInput("close", 0);
+    }
+})
+
 toggleSelective.onNewConfiguration("FAQ").subscribe(configurations => {
-    console.log(configurations);
     configurations.forEach(config => {
         if (config.state === "on") {
             lock.classList.add('unlocked');
