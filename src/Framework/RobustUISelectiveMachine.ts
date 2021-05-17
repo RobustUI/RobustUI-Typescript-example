@@ -59,6 +59,7 @@ export abstract class RobustUISelectiveMachine implements RobustUI {
         if (this.inputs.find(input => input.stream === event) != null) {
             this.$inputStream.next(data)
         }
+        this.machines.get(this.activeMachine).sendInput(event)
     }
 
     public getOutputStream(name: string): Observable<any> {
