@@ -1,82 +1,67 @@
-import {usecasefour} from "./components/usecasefour";
+import { P9Comp } from "./components/P9Comp";
 
-const inputField = document.getElementById("input") as HTMLInputElement;
+const loginFormBtn = document.getElementById("loginForm") as HTMLButtonElement;
+const registerFormBtn = document.getElementById(
+  "registerForm"
+) as HTMLButtonElement;
+const loginBtn = document.getElementById("loginBtn") as HTMLButtonElement;
+const registerBtn = document.getElementById("registerBtn") as HTMLButtonElement;
 
-const dropdown = document.getElementById("dropdown");
-const historyEl = document.getElementById("dropdownEl1");
-const contactEl = document.getElementById("dropdownEl2");
-const jobsEl = document.getElementById("dropdownEl3");
+const register = document.getElementById("register");
+const login = document.getElementById("login");
 
-const lock = document.getElementById("lock");
+const email = document.getElementById("email") as HTMLInputElement;
 
-const toggleSelective = new usecasefour();
+const student = document.getElementById("student");
+const employee = document.getElementById("employee");
 
-inputField.onchange = (event) => {
-    toggleSelective.sendInput('stream', +inputField.value);
-}
+const comp = new P9Comp();
+comp.registerElement(student, "student")
+comp.sendInput("stream", 1);
 
-toggleSelective.onMachineSwitch.subscribe(machine => {
-    if (machine === "dropdown") {
-        toggleSelective.registerElement(dropdown, "dropdown::toggle");
-        toggleSelective.registerElement(historyEl, "dropdown::history");
-        toggleSelective.registerElement(contactEl, "dropdown::contact");
-        toggleSelective.registerElement(jobsEl, "dropdown::jobs");
-        toggleSelective.unregisterElement(lock, "FAQ");
-        dropdown.style.display = "block"
-        lock.style.display = "none"
-    } else if (machine === "FAQ") {
-        toggleSelective.unregisterElement(dropdown, "dropdown::toggle");
-        toggleSelective.unregisterElement(historyEl, "dropdown::history");
-        toggleSelective.unregisterElement(contactEl, "dropdown::contact");
-        toggleSelective.unregisterElement(jobsEl, "dropdown::jobs");
-        toggleSelective.registerElement(lock, "FAQ");
-        dropdown.style.display = "none"
-        lock.style.display = "block"
-    }
-})
+email.onchange = (event) => {
+  if (email.value === "0") {
+    console.log("STUDENT");
+    //comp.sendInput("email", 0)
+  } else if (email.value === "1") {
+    console.log("EMPLOYEE");
+    //comp.sendInput("email", 1)
 
+  }
+};
 
-toggleSelective.onNewConfiguration("toggle").subscribe(configurations => {
-    configurations.forEach(config => {
-        if (config.machine === "toggle") {
-            if (config.state === "show") {
-                document.getElementById("myDropdown").classList.add("show")
-            } else if (config.state === "notShow") {
-                document.getElementById("myDropdown").classList.remove("show")
-            }
-        } else if (config.machine === "history") {
-            handleDropDownMenuElement(historyEl, config.state as string);
-        } else if (config.machine === "contact") {
-            handleDropDownMenuElement(contactEl, config.state as string);
-        } else if (config.machine === "jobs") {
-            handleDropDownMenuElement(jobsEl, config.state as string);
-        }
-    })
-})
+loginFormBtn.onclick = (event) => {
+  comp.sendInput("stream", 0);
+};
 
-toggleSelective.sendInput('stream', 0);
+registerFormBtn.onclick = (event) => {
+  comp.sendInput("stream", 1);
+};
 
-toggleSelective.onNewConfiguration("FAQ").subscribe(configurations => {
-    configurations.forEach(config => {
-        if (config.state === "on") {
-            lock.classList.add('unlocked');
-        } else {
-            lock.classList.remove('unlocked');
-        }
-    })
-})
+loginBtn.onclick = (event) => {
+  event.preventDefault();
+  alert("Login button pressed");
+};
 
-function handleDropDownMenuElement(element: HTMLElement, state: string) {
-    if (state === "notSelected") {
-        element.classList.remove("hovered")
-    } else if (state === "Hovered") {
-        element.classList.add("hovered")
-    }
-}
+registerBtn.onclick = (event) => {
+  event.preventDefault();
+  alert("Register button pressed");
+};
 
-document.addEventListener("click", (event) => {
-    let isInside = dropdown.contains(event.target as Node);
-    if (!isInside) {
-        toggleSelective.sendInput("close", 0);
-    }
-})
+comp.onMachineSwitch.subscribe((machine) => {
+  if (machine === "Login") {
+    comp.unregisterElement(register, "Register");
+    register.style.display = "none";
+    comp.registerElement(login, "Login");
+    login.style.display = "block";
+  } else if (machine === "Register") {
+    comp.registerElement(register, "Register");
+    register.style.display = "block";
+    comp.unregisterElement(login, "Login");
+    login.style.display = "none";
+  }
+});
+
+comp.onNewConfiguration("Register").subscribe((value) => {
+  console.log(value);
+});
