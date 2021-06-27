@@ -1,4 +1,5 @@
 import { P9Comp } from "./components/P9Comp";
+import { Configuration } from "./Framework/configuration";
 
 const loginFormBtn = document.getElementById("loginForm") as HTMLButtonElement;
 const registerFormBtn = document.getElementById(
@@ -16,17 +17,15 @@ const student = document.getElementById("student");
 const employee = document.getElementById("employee");
 
 const comp = new P9Comp();
-comp.registerElement(student, "student")
-comp.sendInput("stream", 1);
+comp.sendInput("stream", 0);
 
-email.onchange = (event) => {
-  if (email.value === "0") {
-    console.log("STUDENT");
-    //comp.sendInput("email", 0)
-  } else if (email.value === "1") {
-    console.log("EMPLOYEE");
-    //comp.sendInput("email", 1)
-
+email.onchange = (_) => {
+  if (email.value.endsWith("@student.aau.dk")) {
+    comp.sendInput("email", 0);
+  } else if (email.value.endsWith("@employee.aau.dk")) {
+    comp.sendInput("email", 1);
+  } else {
+    comp.sendInput("email", 2);
   }
 };
 
@@ -62,6 +61,18 @@ comp.onMachineSwitch.subscribe((machine) => {
   }
 });
 
-comp.onNewConfiguration("Register").subscribe((value) => {
-  console.log(value);
+comp.onNewConfiguration("email").subscribe((machine) => {
+  const config = machine[0].state[0] as Configuration;
+  if (config.machine === "student") {
+    comp.registerElement(student, "student");
+    student.style.display = "block";
+    employee.style.display = "none";
+  } else if (config.machine === "employee") {
+    comp.registerElement(employee, "employee");
+    employee.style.display = "block";
+    student.style.display = "none";
+  } else if (config.machine === "unknown") {
+    student.style.display = "none";
+    employee.style.display = "none";
+  }
 });

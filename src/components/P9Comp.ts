@@ -16,6 +16,7 @@ export type P9CompMachines =
   | "Login"
   | "Register"
   | "Register::email"
+  | "email"
   | "Register::email::student"
   | "Register::email::employee"
   | "Register::email::unknown";
