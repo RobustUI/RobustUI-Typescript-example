@@ -53,11 +53,21 @@ comp.onMachineSwitch.subscribe((machine) => {
     register.style.display = "none";
     comp.registerElement(login, "Login");
     login.style.display = "block";
+
+    loginFormBtn.classList.remove('inactive_tab');
+    loginFormBtn.classList.add('active_tab');
+    registerFormBtn.classList.remove('active_tab');
+    registerFormBtn.classList.add('inactive_tab');
   } else if (machine === "Register") {
     comp.registerElement(register, "Register");
     register.style.display = "block";
     comp.unregisterElement(login, "Login");
     login.style.display = "none";
+
+    loginFormBtn.classList.remove('active_tab');
+    loginFormBtn.classList.add('inactive_tab');
+    registerFormBtn.classList.remove('inactive_tab');
+    registerFormBtn.classList.add('active_tab');
   }
 });
 
@@ -65,11 +75,11 @@ comp.onNewConfiguration("email").subscribe((machine) => {
   const config = machine[0].state[0] as Configuration;
   if (config.machine === "student") {
     comp.registerElement(student, "student");
-    student.style.display = "block";
+    student.style.display = "flex";
     employee.style.display = "none";
   } else if (config.machine === "employee") {
     comp.registerElement(employee, "employee");
-    employee.style.display = "block";
+    employee.style.display = "flex";
     student.style.display = "none";
   } else if (config.machine === "unknown") {
     student.style.display = "none";

@@ -4,18 +4,26 @@
   "description": "",
   "private": true,
   "dependencies": {
+    "@tailwindcss/forms": "^0.3.3",
     "lodash": "^4.17.21",
     "rxjs": "^6.6.6"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
+    "autoprefixer": "^10.2.6",
+    "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
+    "postcss": "^8.3.5",
+    "tailwindcss": "^2.2.4",
     "ts-loader": "^8.0.18",
     "typescript": "^4.2.3",
     "webpack": "^5.26.3",
-    "webpack-cli": "^4.5.0"
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "webpack"
+    "build": "cross-env NODE_ENV=production webpack && cross-env NODE_ENV=production npx tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
+    "dev": "webpack && npx tailwindcss -i ./src/styles.css -o ./dist/styles.css"
   },
   "keywords": [],
   "author": "",
