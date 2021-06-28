@@ -22,7 +22,7 @@ comp.sendInput("stream", 0);
 email.onchange = (_) => {
   if (email.value.endsWith("@student.aau.dk")) {
     comp.sendInput("email", 0);
-  } else if (email.value.endsWith("@employee.aau.dk")) {
+  } else if (email.value.endsWith("@cs.aau.dk")) {
     comp.sendInput("email", 1);
   } else {
     comp.sendInput("email", 2);
